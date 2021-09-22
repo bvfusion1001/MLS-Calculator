@@ -62,7 +62,7 @@
         copyText.setSelectionRange(0, 99999); /* For mobile devices */
         /* Copy the text inside the text field */
         document.execCommand("copy");
-        alert("Copied the text: " + copyText.value);
+        //alert("Copied the text: " + copyText.value);
     }
   
     function createElements(data) {
@@ -83,10 +83,10 @@
         div.style.color = "black";
         div.innerHTML = `<table class="dreampop-helper">
   <tr>
-  <td colspan="2" style="font-size: 12pt;font-weight: bold;text-align: center;padding: 0;">MLS Calculator</td>
+  <td style="font-size: 12pt;font-weight: bold;text-align: center;padding: 0;">MLS Calculator</td>
   <td></td>
   </tr><tr>
-  <td><label style="top: -20px;" for="monthlyTotal">Monthly Total</label></td>
+  <td><label style="top: -20px;" for="monthlyTotal">Monthly Total</label>&nbsp;<button onClick="copyToClipboard('monthlyTotal');">📋</button></td>
   <td><input id="monthlyTotal" value=""/></td>
   </tr><tr>
   <td><label style="top: -20px;" for="pni">P&I</label></td>
@@ -149,8 +149,8 @@
             var priceValue = document.getElementsByClassName('d-text d-fontSize--largest d-color--brandDark')[0].textContent.trim();
             var price = parseCurrency(priceValue);
             propertyTax = price * 0.01;
+            document.getElementById('propertyTax').value = doubleToCurrency(propertyTax.toFixed(0));
         } catch (ex) {}
-        document.getElementById('propertyTax').value = doubleToCurrency(propertyTax.toFixed(0));
   
         var assessmentValue = '';
         var supplementalTax = '';
@@ -158,39 +158,33 @@
             var assessmentLabel = $('div > span').filter(function() { return ($(this).text() === 'Tax Other Annual Assessment Amount') });
             assessmentValue = assessmentLabel[0].parentElement.nextElementSibling.children[0].textContent;
             supplementalTax = parseCurrency(assessmentValue);
+            document.getElementById('assessmentValue').value = doubleToCurrency(supplementalTax.toFixed(0));
         } catch (ex) {}
-        document.getElementById('assessmentValue').value = doubleToCurrency(supplementalTax.toFixed(0));
   
         var hoa = '';
         try {
             var hoaLabel = $('div > span').filter(function() { return ($(this).text().indexOf('Association Fee') > -1) });
             var hoaValue = hoaLabel[1].parentElement.nextElementSibling.children[0].textContent;
             hoa = parseCurrency(hoaValue);
+            document.getElementById('hoa').value = doubleToCurrency(hoa.toFixed(0));
         } catch (ex) {}
-        document.getElementById('hoa').value = doubleToCurrency(hoa.toFixed(0));
   
         var downPayment = price * 0.03;
         var loanAmount = price - downPayment;
         var interestRate = 0.03375 / 12;
         var terms = 30 * 12;
   
-        var mlsCalculator = document.getElementById('mlsCalculator');
-        if (!document.getElementById('_ctl0_m_tbLocation')) {
-            mlsCalculator.style.display = "block";
-            var monthlyTax = (propertyTax + supplementalTax) / 12;
-            document.getElementById('monthlyTax').value = doubleToCurrency(monthlyTax.toFixed(0));
+        var monthlyTax = (propertyTax + supplementalTax) / 12;
+        document.getElementById('monthlyTax').value = doubleToCurrency(monthlyTax.toFixed(0));
   
-            var monthlyMinusPni = monthlyTax + pmi + hInsurance + hoa;
-            document.getElementById('monthlyMinusPni').value = doubleToCurrency(monthlyMinusPni.toFixed(0));
+        var monthlyMinusPni = monthlyTax + pmi + hInsurance + hoa;
+        document.getElementById('monthlyMinusPni').value = doubleToCurrency(monthlyMinusPni.toFixed(0));
   
-            var pni = loanAmount * (interestRate * Math.pow((1+interestRate), terms) / (Math.pow((1+interestRate), terms) - 1));
-            document.getElementById('pni').value = doubleToCurrency(pni);
+        var pni = loanAmount * (interestRate * Math.pow((1+interestRate), terms) / (Math.pow((1+interestRate), terms) - 1));
+        document.getElementById('pni').value = doubleToCurrency(pni);
   
-            var monthlyTotal = monthlyMinusPni + pni;
-            document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
-  } else {
-            mlsCalculator.style.display = "none";
-        }
+        var monthlyTotal = monthlyMinusPni + pni;
+        document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
     }
   
     function run() {
@@ -200,14 +194,21 @@
         let element = createElements();
         addCardToPage(element);
   
+        // To make these accessible after page load
         document.scrapeData = scrapeData;
+        document.copyToClipboard = copyToClipboard;
+  
         setInterval(function() {
             try {
-                document.scrapeData();
+                var mlsCalculator = document.getElementById('mlsCalculator');
+                if (!document.getElementById('_ctl0_m_tbLocation')) {
+                    mlsCalculator.style.display = "block";
+                    document.scrapeData();
+                } else {
+                    mlsCalculator.style.display = "none";
+                }
             } catch (ex) {}
         }, 1000);
-  
-        //document.copyToClipboard = copyToClipboard;
     }
   
     // Run after page loads
