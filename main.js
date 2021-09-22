@@ -35,6 +35,11 @@
     border: 1px solid black;
     border-radius: 5px;
   }
+  table.dreampop-helper .calc-results {
+    text-align: right;
+    padding-right: 10px;   
+    width: 40% 
+  }
   `,
             head = document.head || document.getElementsByTagName('head')[0],
             style = document.createElement('style');
@@ -96,42 +101,45 @@
   </tr><tr>
   <td>
     <label style="top: -20px;" for="monthlyTotal">Monthly Total</label>
-  </td><td>
+  </td><td style="width: 50%;">
       <div style="position: relative;">
           <input style="font-weight: bold;" id="monthlyTotal" value=""/>
           <button style="position: absolute;left: 4px;padding: 0;top: 5px;" onclick="copyToClipboard('monthlyTotal');">📋</button>
       </div>
   </td>
   </tr><tr>
-  <td><span id="garage"></span></td>
-  <td><span id="panels"></span></td>
+    <td><span id="garage"></span></td>
+    <td><span id="panels"></span></td>
   </tr><tr>
-  <td><span id="beds"></span></td>
-  <td><span id="baths"></span></td>
+    <td><span id="beds"></span></td>
+    <td><span id="baths"></span></td>
+  </tr>
+  </table>
+  <table class="dreampop-helper">
+  <tr>
+    <td><label style="top: -20px;" for="pni">P&I</label></td>
+    <td class="calc-results"><span id="pni"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="pni">P&I</label></td>
-  <td><input id="pni" value=""/></td>
+    <td><label style="top: -20px;" for="monthlyMinusPni">Monthly - P&I</label></td>
+    <td class="calc-results"><span id="monthlyMinusPni"/><span id=""/></td>
   </tr><tr>
-  <td><label style="top: -20px;" for="monthlyMinusPni">Monthly - P&I</label></td>
-  <td><input id="monthlyMinusPni" value=""/></td>
+    <td><label style="top: -20px;" for="propertyTax">Property Tax</label></td>
+    <td class="calc-results"><span id="propertyTax"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="propertyTax">Property Tax</label></td>
-  <td><input id="propertyTax" value=""/></td>
+    <td><label style="top: -20px;" for="assessmentValue">Assessment Value</label></td>
+    <td class="calc-results"><span id="assessmentValue"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="assessmentValue">Assessment Value</label></td>
-  <td><input id="assessmentValue" value=""/></td>
+    <td><label style="top: -20px;" for="monthlyTax">Monthly Tax</label></td>
+    <td class="calc-results"><span id="monthlyTax"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="monthlyTax">Monthly Tax</label></td>
-  <td><input id="monthlyTax" value=""/></td>
+    <td><label style="top: -20px;" for="pmi">PMI</label></td>
+    <td class="calc-results"><span id="pmi"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="pmi">PMI</label></td>
-  <td><input id="pmi" value=""/></td>
+    <td><label style="top: -20px;" for="hInsurance">Homeowner's Insurance</label></td>
+    <td class="calc-results"><span id="hInsurance"/><td>
   </tr><tr>
-  <td><label style="top: -20px;" for="hInsurance">Homeowner's Insurance</label></td>
-  <td><input id="hInsurance" value=""/></td>
-  </tr><tr>
-  <td><label style="top: -20px;" for="hoa">HOA</label></td>
-  <td><input id="hoa" value=""/></td>
+    <td><label style="top: -20px;" for="hoa">HOA</label></td>
+    <td class="calc-results"><span id="hoa"/><td>
   </tr></table>`;
 
         return div;
@@ -160,9 +168,9 @@
         console.log('tamper');
 
         var pmi = 175;
-        document.getElementById('pmi').value = doubleToCurrency(pmi);
+        document.getElementById('pmi').textContent = doubleToCurrency(pmi);
         var hInsurance = 150;
-        document.getElementById('hInsurance').value = doubleToCurrency(hInsurance);
+        document.getElementById('hInsurance').textContent = doubleToCurrency(hInsurance);
 
         var address = document.getElementsByClassName('formula J_formula')[0].textContent.trim()
         document.getElementById('address').value = address;
@@ -172,7 +180,7 @@
             var priceValue = document.getElementsByClassName('d-text d-fontSize--largest d-color--brandDark')[0].textContent.trim();
             var price = parseCurrency(priceValue);
             propertyTax = price * 0.01;
-            document.getElementById('propertyTax').value = doubleToCurrency(propertyTax.toFixed(0));
+            document.getElementById('propertyTax').textContent = doubleToCurrency(propertyTax.toFixed(0));
         } catch (ex) { }
 
         var assessmentValue = '';
@@ -181,7 +189,7 @@
             var assessmentLabel = $('div > span').filter(function () { return ($(this).text() === 'Tax Other Annual Assessment Amount') });
             assessmentValue = assessmentLabel[0].parentElement.nextElementSibling.children[0].textContent;
             supplementalTax = parseCurrency(assessmentValue);
-            document.getElementById('assessmentValue').value = doubleToCurrency(supplementalTax.toFixed(0));
+            document.getElementById('assessmentValue').textContent = doubleToCurrency(supplementalTax.toFixed(0));
         } catch (ex) { }
 
         var hoa = '';
@@ -189,7 +197,7 @@
             var hoaLabel = $('div > span').filter(function () { return ($(this).text().indexOf('Association Fee') > -1) });
             var hoaValue = hoaLabel[1].parentElement.nextElementSibling.children[0].textContent;
             hoa = parseCurrency(hoaValue);
-            document.getElementById('hoa').value = doubleToCurrency(hoa.toFixed(0));
+            document.getElementById('hoa').textContent = doubleToCurrency(hoa.toFixed(0));
         } catch (ex) { }
 
         var downPayment = price * 0.03;
@@ -198,13 +206,13 @@
         var terms = 30 * 12;
 
         var monthlyTax = (propertyTax + supplementalTax) / 12;
-        document.getElementById('monthlyTax').value = doubleToCurrency(monthlyTax.toFixed(0));
+        document.getElementById('monthlyTax').textContent = doubleToCurrency(monthlyTax.toFixed(0));
 
         var monthlyMinusPni = monthlyTax + pmi + hInsurance + hoa;
-        document.getElementById('monthlyMinusPni').value = doubleToCurrency(monthlyMinusPni.toFixed(0));
+        document.getElementById('monthlyMinusPni').textContent = doubleToCurrency(monthlyMinusPni.toFixed(0));
 
         var pni = loanAmount * (interestRate * Math.pow((1 + interestRate), terms) / (Math.pow((1 + interestRate), terms) - 1));
-        document.getElementById('pni').value = doubleToCurrency(pni);
+        document.getElementById('pni').textContent = doubleToCurrency(pni);
 
         var monthlyTotal = monthlyMinusPni + pni;
         document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
