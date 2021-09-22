@@ -89,6 +89,9 @@
   <td><label style="top: -20px;" for="monthlyTotal">Monthly Total</label>&nbsp;<button onClick="copyToClipboard('monthlyTotal');">📋</button></td>
   <td><input id="monthlyTotal" value=""/></td>
   </tr><tr>
+  <td><span id="garage"></span></td>
+  <td><span id="panels"></span></td>
+  </tr><tr>
   <td><label style="top: -20px;" for="pni">P&I</label></td>
   <td><input id="pni" value=""/></td>
   </tr><tr>
@@ -185,6 +188,28 @@
   
         var monthlyTotal = monthlyMinusPni + pni;
         document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
+
+        try {
+            var garageSpaces = $('div > span').filter(function() { return ($(this).text().indexOf('Garage Spaces') > -1) });
+            var garageValue = parseInt(garageSpaces[1].parentElement.nextElementSibling.children[0].textContent, 10);
+            var garageResult = garageValue < 2 ? `❌ ${garageValue}` :
+                garageValue == 2 ? `⚠ ${garageValue}` : 
+                `✅ ${garageValue}`;
+            garageResult += ' Car Garage';
+            document.getElementById('garage').textContent = garageResult;
+        } catch (ex) {}
+
+        try {
+            var documentText = (document.documentElement.textContent || document.documentElement.innerText);
+            var hasSolar = documentText.match(/solar/) && !documentText.match(/no solar/);
+            var solarResult = hasSolar ? '✅ Panels' : '⚠ No Panels';
+            document.getElementById('panels').textContent = solarResult;
+        } catch (ex) {}
+
+    }
+
+    function fillData(data) {
+        //TODO
     }
   
     function run() {
