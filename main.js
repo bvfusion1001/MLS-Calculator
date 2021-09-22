@@ -86,10 +86,19 @@
   <td colspan="2" style="font-size: 12pt;font-weight: bold;text-align: center;padding: 0;">MLS Calculator</td>
   <td></td>
   </tr><tr>
-  <td><label style="top: -20px;" for="monthlyTotal">Monthly Total</label></td>
-  <td>
+  <td colspan="2">
       <div style="position: relative;">
-          <input id="monthlyTotal" value="">
+          <input id="address" value=""/>
+          <button style="position: absolute;left: 4px;padding: 0;top: 5px;" onclick="copyToClipboard('address');">📋</button>
+      </div>
+  </td>
+  <td></td>
+  </tr><tr>
+  <td>
+    <label style="top: -20px;" for="monthlyTotal">Monthly Total</label>
+  </td><td>
+      <div style="position: relative;">
+          <input style="font-weight: bold;" id="monthlyTotal" value=""/>
           <button style="position: absolute;left: 4px;padding: 0;top: 5px;" onclick="copyToClipboard('monthlyTotal');">📋</button>
       </div>
   </td>
@@ -154,6 +163,9 @@
         document.getElementById('pmi').value = doubleToCurrency(pmi);
         var hInsurance = 150;
         document.getElementById('hInsurance').value = doubleToCurrency(hInsurance);
+
+        var address = document.getElementsByClassName('formula J_formula')[0].textContent.trim()
+        document.getElementById('address').value = address;
 
         var propertyTax = '';
         try {
