@@ -249,7 +249,7 @@
 
         try {
             var documentText = (document.documentElement.textContent || document.documentElement.innerText);
-            var hasSolar = documentText.match(/solar/) && !documentText.match(/no solar/);
+            var hasSolar = documentText.match(/solar/gi) && !documentText.match(/no solar/gi);
             var solarResult = hasSolar ? '✅ ടolar' : '⚠ No ടolar';
             document.getElementById('panels').textContent = solarResult;
         } catch (ex) { }
