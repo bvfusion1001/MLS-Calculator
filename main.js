@@ -273,7 +273,7 @@
         setInterval(function () {
             try {
                 var mlsCalculator = document.getElementById('mlsCalculator');
-                if (!document.getElementById('_ctl0_m_tbLocation')) {
+                if (document.getElementById('_ctl0_m_btnClosePILP')) {
                     mlsCalculator.style.display = "block";
                     document.scrapeData();
                 } else {
